@@ -4,16 +4,17 @@ import { Board } from '../Board/Board';
 import { GameStateHistoryEntry, jumpTo, playCell } from './Game.Slice';
 
 export function Game() {
-  const state = useStore();
+  const { history, winner, stepNumber, xIsNext } = useStore();
 
+  const status = winner ? 'Winner: ' + winner : 'Next player: ' + (xIsNext ? 'X' : 'O');
   return (
     <div className='game'>
       <div className='game-board'>
-        <Board squares={state.history[state.stepNumber].squares} onCellClicked={onCellClicked} />
+        <Board squares={history[stepNumber].squares} onCellClicked={onCellClicked} />
       </div>
       <div className='game-info'>
         <div>{status}</div>
-        <ol>{state.history.map(getMoveTemplate)}</ol>
+        <ol>{history.map(getMoveTemplate)}</ol>
       </div>
     </div>
   );

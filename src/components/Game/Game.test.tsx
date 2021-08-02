@@ -139,3 +139,92 @@ it('Should jump history on click', () => {
 
   expect(store.getState().stepNumber).toBe(4);
 });
+
+it('Should win', () => {
+  act(() => {
+    render(<Game />);
+  });
+
+  act(() => {
+    store.dispatch(playCell(0));
+    store.dispatch(playCell(2));
+    store.dispatch(playCell(3));
+    store.dispatch(playCell(4));
+    store.dispatch(playCell(6));
+    store.dispatch(playCell(5));
+  });
+
+  expect(screen.getByText('Winner: X')).toBeInTheDocument();
+  const buttons = screen.queryAllByRole('button');
+  expect(buttons[5].innerHTML).toBeFalsy();
+});
+
+it('Should jump before and to non winning step', () => {
+  act(() => {
+    render(<Game />);
+  });
+
+  act(() => {
+    store.dispatch(playCell(0));
+    store.dispatch(playCell(2));
+    store.dispatch(playCell(3));
+    store.dispatch(playCell(4));
+    store.dispatch(playCell(7));
+    store.dispatch(jumpTo(4));
+  });
+
+  expect(screen.getByText('Next player: X')).toBeInTheDocument();
+
+  act(() => {
+    store.dispatch(jumpTo(5));
+  });
+
+  expect(screen.getByText('Next player: O')).toBeInTheDocument();
+});
+
+it('Should jump before and to winning step', () => {
+  act(() => {
+    render(<Game />);
+  });
+
+  act(() => {
+    store.dispatch(playCell(0));
+    store.dispatch(playCell(2));
+    store.dispatch(playCell(3));
+    store.dispatch(playCell(4));
+    store.dispatch(playCell(6));
+    store.dispatch(jumpTo(4));
+  });
+
+  expect(screen.getByText('Next player: X')).toBeInTheDocument();
+
+  act(() => {
+    store.dispatch(jumpTo(5));
+  });
+
+  expect(screen.getByText('Winner: X')).toBeInTheDocument();
+});
+
+it('Should jump before and to winning step for O', () => {
+  act(() => {
+    render(<Game />);
+  });
+
+  act(() => {
+    store.dispatch(playCell(0));
+    store.dispatch(playCell(2));
+    store.dispatch(playCell(3));
+    store.dispatch(playCell(4));
+    store.dispatch(playCell(7));
+    store.dispatch(playCell(6));
+    store.dispatch(jumpTo(5));
+  });
+
+  expect(screen.getByText('Next player: O')).toBeInTheDocument();
+
+  act(() => {
+    store.dispatch(jumpTo(6));
+  });
+
+  expect(screen.getByText('Winner: O')).toBeInTheDocument();
+});

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BoardSquares } from '../../types/boardSquares';
+import { BoardSquares, calculateWinner, SquareValue } from '../../types/boardSquares';
 
 export type GameStateHistoryEntry = { squares: BoardSquares };
 
@@ -7,12 +7,14 @@ export interface GameState {
   history: GameStateHistoryEntry[];
   stepNumber: number;
   xIsNext: boolean;
+  winner: SquareValue;
 }
 
 const initialState: GameState = {
   history: [{ squares: [null, null, null, null, null, null, null, null, null] }],
   stepNumber: 0,
   xIsNext: true,
+  winner: null,
 };
 
 const slice = createSlice({
@@ -23,16 +25,30 @@ const slice = createSlice({
     playCell: (state, { payload: index }: PayloadAction<number>) => {
       state.history = state.history.slice(0, state.stepNumber + 1);
       const current = state.history[state.history.length - 1];
-      if (current.squares[index]) return;
+      if (current.squares[index] || state.winner) return;
 
       state.history.push({ squares: current.squares.slice() as BoardSquares });
-      state.history[state.history.length - 1].squares[index] = state.xIsNext ? 'X' : 'O';
+      const value = state.xIsNext ? 'X' : 'O';
+      state.history[state.history.length - 1].squares[index] = value;
       state.xIsNext = !state.xIsNext;
       state.stepNumber = state.history.length - 1;
+
+      if (calculateWinner(state.history[state.history.length - 1].squares)) {
+        state.winner = value;
+      }
     },
     jumpTo: (state, { payload: step }: PayloadAction<number>) => {
       state.stepNumber = step;
       state.xIsNext = step % 2 === 0;
+
+      if (step < state.history.length - 1) {
+        state.winner = null;
+        return;
+      }
+
+      if (calculateWinner(state.history[state.history.length - 1].squares)) {
+        state.winner = !state.xIsNext ? 'X' : 'O';
+      }
     },
   },
 });
