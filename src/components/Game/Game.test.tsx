@@ -108,3 +108,34 @@ it('Should update store on cell clicked', () => {
   expect(history[history.length - 1].squares[0]).toMatch('X');
   expect(history[history.length - 1].squares[4]).toMatch('O');
 });
+
+it('Should jump history on click', () => {
+  act(() => {
+    render(<Game />);
+  });
+
+  act(() => {
+    store.dispatch(playCell(1));
+    store.dispatch(playCell(2));
+    store.dispatch(playCell(3));
+    store.dispatch(playCell(4));
+  });
+
+  act(() => {
+    fireEvent.click(screen.getByText('Go to game start'));
+  });
+
+  expect(store.getState().stepNumber).toBe(0);
+
+  act(() => {
+    fireEvent.click(screen.getByText('Go to move #2'));
+  });
+
+  expect(store.getState().stepNumber).toBe(2);
+
+  act(() => {
+    fireEvent.click(screen.getByText('Go to move #4'));
+  });
+
+  expect(store.getState().stepNumber).toBe(4);
+});

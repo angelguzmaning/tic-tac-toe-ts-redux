@@ -1,7 +1,7 @@
 import { store } from '../../state/store';
 import { useStore } from '../../state/storeHooks';
 import { Board } from '../Board/Board';
-import { GameStateHistoryEntry, playCell } from './Game.Slice';
+import { GameStateHistoryEntry, jumpTo, playCell } from './Game.Slice';
 
 export function Game() {
   const state = useStore();
@@ -23,9 +23,13 @@ function getMoveTemplate(_: GameStateHistoryEntry, move: number) {
   const desc = move ? 'Go to move #' + move : 'Go to game start';
   return (
     <li key={move}>
-      <button>{desc}</button>
+      <button onClick={() => onJumpTo(move)}>{desc}</button>
     </li>
   );
+}
+
+function onJumpTo(step: number) {
+  store.dispatch(jumpTo(step));
 }
 
 function onCellClicked(index: number) {
