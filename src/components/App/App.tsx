@@ -1,9 +1,9 @@
-import { Board } from '../Board/Board';
+import { Game } from '../Game/Game';
 
 function App() {
   return (
     <div className='App'>
-      <Board squares={[null, 'X', null, 'O', 'O', 'X', 'X', null, null]} />
+      <Game />
     </div>
   );
 }

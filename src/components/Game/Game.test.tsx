@@ -1,16 +1,23 @@
 import { act, render, screen } from '@testing-library/react';
-import { dispatchOnCall, store } from '../../state/store';
+import { store } from '../../state/store';
 import { Game } from './Game';
-import { playCell, reset } from './Game.Slice';
+import { jumpTo, playCell, reset } from './Game.Slice';
+import * as R from 'ramda';
 
-beforeEach(dispatchOnCall(reset()));
+beforeEach(() => {
+  act(() => {
+    store.dispatch(reset());
+  });
+});
 
-it('Should render empty cells', () => {
-  const { queryAllByRole } = render(<Game />);
+it('Should render empty cells and Go to game start button', () => {
+  const { queryAllByRole, getByText } = render(<Game />);
 
   const buttons = queryAllByRole('button');
-  expect(buttons.length).toBe(9);
-  buttons.forEach((button) => expect(button.innerHTML).toBeFalsy());
+  expect(buttons.length).toBe(9 + store.getState().history.length);
+  R.take(9, buttons).forEach((button) => expect(button.innerHTML).toBeFalsy());
+
+  expect(getByText('Go to game start')).toBeInTheDocument();
 });
 
 it('Should update render to match state', () => {
@@ -40,6 +47,22 @@ it('Should update render to match state', () => {
   const result3 = getSquareValues();
   expect(result3.Xs.length).toBe(3);
   expect(result3.Os.length).toBe(2);
+
+  act(() => {
+    store.dispatch(jumpTo(1));
+  });
+
+  const result4 = getSquareValues();
+  expect(result4.Xs.length).toBe(1);
+  expect(result4.Os.length).toBe(0);
+
+  act(() => {
+    store.dispatch(jumpTo(4));
+  });
+
+  const result5 = getSquareValues();
+  expect(result5.Xs.length).toBe(2);
+  expect(result5.Os.length).toBe(2);
 });
 
 function getSquareValues(): { Xs: HTMLElement[]; Os: HTMLElement[] } {
@@ -48,3 +71,21 @@ function getSquareValues(): { Xs: HTMLElement[]; Os: HTMLElement[] } {
     Os: screen.queryAllByText('O'),
   };
 }
+
+it('Should update render to match state', () => {
+  act(() => {
+    render(<Game />);
+  });
+
+  act(() => {
+    store.dispatch(playCell(1));
+    store.dispatch(playCell(2));
+    store.dispatch(playCell(3));
+    store.dispatch(playCell(4));
+  });
+
+  expect(screen.getByText('Go to move #1')).toBeInTheDocument();
+  expect(screen.getByText('Go to move #2')).toBeInTheDocument();
+  expect(screen.getByText('Go to move #3')).toBeInTheDocument();
+  expect(screen.getByText('Go to move #4')).toBeInTheDocument();
+});
