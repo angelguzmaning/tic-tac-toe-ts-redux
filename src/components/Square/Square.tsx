@@ -1,5 +1,9 @@
 import { SquareValue } from '../../types/boardSquares';
 
-export function Square(props: { value: SquareValue }) {
-  return <button className='square'>{props.value}</button>;
+export function Square({ value, onClick }: { value: SquareValue; onClick: () => void }) {
+  return (
+    <button className='square' onClick={onClick}>
+      {value}
+    </button>
+  );
 }

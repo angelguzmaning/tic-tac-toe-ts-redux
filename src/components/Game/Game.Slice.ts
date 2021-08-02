@@ -22,7 +22,10 @@ const slice = createSlice({
     reset: () => initialState,
     playCell: (state, { payload: index }: PayloadAction<number>) => {
       state.history = state.history.slice(0, state.stepNumber + 1);
-      state.history.push({ squares: state.history[state.history.length - 1].squares.slice() as BoardSquares });
+      const current = state.history[state.history.length - 1];
+      if (current.squares[index]) return;
+
+      state.history.push({ squares: current.squares.slice() as BoardSquares });
       state.history[state.history.length - 1].squares[index] = state.xIsNext ? 'X' : 'O';
       state.xIsNext = !state.xIsNext;
       state.stepNumber = state.history.length - 1;

@@ -1,24 +1,28 @@
-import { BoardSquares } from '../../types/boardSquares';
+import { BoardSquares, SquareValue } from '../../types/boardSquares';
 import { Square } from '../Square/Square';
 
-export function Board({ squares }: { squares: BoardSquares }) {
+export function Board({ squares, onCellClicked }: { squares: BoardSquares; onCellClicked: (index: number) => void }) {
   return (
     <div>
       <div className='board-row'>
-        <Square value={squares[0]} />
-        <Square value={squares[1]} />
-        <Square value={squares[2]} />
+        {renderSquare(squares[0], 0, onCellClicked)}
+        {renderSquare(squares[1], 1, onCellClicked)}
+        {renderSquare(squares[2], 2, onCellClicked)}
       </div>
       <div className='board-row'>
-        <Square value={squares[3]} />
-        <Square value={squares[4]} />
-        <Square value={squares[5]} />
+        {renderSquare(squares[3], 3, onCellClicked)}
+        {renderSquare(squares[4], 4, onCellClicked)}
+        {renderSquare(squares[5], 5, onCellClicked)}
       </div>
       <div className='board-row'>
-        <Square value={squares[6]} />
-        <Square value={squares[7]} />
-        <Square value={squares[8]} />
+        {renderSquare(squares[6], 6, onCellClicked)}
+        {renderSquare(squares[7], 7, onCellClicked)}
+        {renderSquare(squares[8], 8, onCellClicked)}
       </div>
     </div>
   );
+}
+
+function renderSquare(square: SquareValue, index: number, onCellClicked: (index: number) => void) {
+  return <Square value={square} onClick={() => onCellClicked(index)} />;
 }

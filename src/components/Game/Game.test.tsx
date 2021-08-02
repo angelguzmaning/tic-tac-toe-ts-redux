@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { store } from '../../state/store';
 import { Game } from './Game';
 import { jumpTo, playCell, reset } from './Game.Slice';
@@ -88,4 +88,23 @@ it('Should update render to match state', () => {
   expect(screen.getByText('Go to move #2')).toBeInTheDocument();
   expect(screen.getByText('Go to move #3')).toBeInTheDocument();
   expect(screen.getByText('Go to move #4')).toBeInTheDocument();
+});
+
+it('Should update store on cell clicked', () => {
+  act(() => {
+    render(<Game />);
+  });
+
+  const buttons = screen.queryAllByRole('button');
+  act(() => {
+    fireEvent.click(buttons[0]);
+    fireEvent.click(buttons[4]);
+    fireEvent.click(buttons[4]);
+  });
+
+  const { history, xIsNext, stepNumber } = store.getState();
+  expect(xIsNext).toBe(true);
+  expect(stepNumber).toBe(2);
+  expect(history[history.length - 1].squares[0]).toMatch('X');
+  expect(history[history.length - 1].squares[4]).toMatch('O');
 });

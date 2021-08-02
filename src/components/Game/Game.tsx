@@ -1,6 +1,7 @@
+import { store } from '../../state/store';
 import { useStore } from '../../state/storeHooks';
 import { Board } from '../Board/Board';
-import { GameStateHistoryEntry } from './Game.Slice';
+import { GameStateHistoryEntry, playCell } from './Game.Slice';
 
 export function Game() {
   const state = useStore();
@@ -8,7 +9,7 @@ export function Game() {
   return (
     <div className='game'>
       <div className='game-board'>
-        <Board squares={state.history[state.stepNumber].squares} />
+        <Board squares={state.history[state.stepNumber].squares} onCellClicked={onCellClicked} />
       </div>
       <div className='game-info'>
         <div>{status}</div>
@@ -25,4 +26,8 @@ function getMoveTemplate(_: GameStateHistoryEntry, move: number) {
       <button>{desc}</button>
     </li>
   );
+}
+
+function onCellClicked(index: number) {
+  store.dispatch(playCell(index));
 }

@@ -3,7 +3,7 @@ import { Board } from './Board';
 
 it('Should render squares with values', () => {
   const { queryAllByRole, queryAllByText } = render(
-    <Board squares={[null, 'X', null, 'O', 'O', 'X', 'X', null, null]} />
+    <Board squares={[null, 'X', null, 'O', 'O', 'X', 'X', null, null]} onCellClicked={() => {}} />
   );
 
   expect(queryAllByRole('button').length).toBe(9);
