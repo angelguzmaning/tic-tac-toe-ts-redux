@@ -10,7 +10,7 @@ export function useStore() {
     }
 
     return store.subscribe(handleStatusChange);
-  });
+  }, [null]);
 
   return state;
 }
