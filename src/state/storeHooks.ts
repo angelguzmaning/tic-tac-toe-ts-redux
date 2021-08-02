@@ -2,15 +2,7 @@ import { useEffect, useState } from 'react';
 import { store } from './store';
 
 export function useStore() {
-  const [state, setIsOnline] = useState(store.getState());
-
-  useEffect(() => {
-    function handleStatusChange() {
-      setIsOnline(store.getState());
-    }
-
-    return store.subscribe(handleStatusChange);
-  }, [null]);
-
+  const [state, setState] = useState(store.getState());
+  useEffect(() => store.subscribe(() => setState(store.getState())), [null]);
   return state;
 }
