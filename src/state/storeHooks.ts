@@ -6,3 +6,8 @@ export function useStore() {
   useEffect(() => store.subscribe(() => setState(store.getState())), [null]);
   return state;
 }
+
+
+function x() {
+  return 10;
+}
