@@ -14,21 +14,23 @@ export function Game() {
       </div>
       <div className='game-info'>
         <div>{status}</div>
-        <ol>{history.map(getMoveTemplate)}</ol>
+        <ol>{history.map(getMoveTemplate(stepNumber))}</ol>
       </div>
     </div>
   );
 }
 
-function getMoveTemplate(entry: GameStateHistoryEntry, move: number) {
-  const desc = move
-    ? `Go to move #${move} ${getColRowRepresentationOfCell(entry.playedCell || 0)}`
-    : 'Go to game start';
-  return (
-    <li key={move}>
-      <button onClick={() => onJumpTo(move)}>{desc}</button>
-    </li>
-  );
+function getMoveTemplate(current: number) {
+  return (entry: GameStateHistoryEntry, move: number) => {
+    const desc = move
+      ? `Go to move #${move} ${getColRowRepresentationOfCell(entry.playedCell || 0)}`
+      : 'Go to game start';
+    return (
+      <li key={move}>
+        <button onClick={() => onJumpTo(move)}>{move === current ? <b>{desc}</b> : desc}</button>
+      </li>
+    );
+  };
 }
 
 function getColRowRepresentationOfCell(index: number): string {
