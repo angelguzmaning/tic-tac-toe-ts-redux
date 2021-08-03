@@ -1,24 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { WritableDraft } from 'immer/dist/internal';
-import { BoardSquares, calculateWinner, SquareValue } from '../../types/boardSquares';
+import { BoardSquares, calculateWinner } from '../../types/boardSquares';
+import { GameStatus } from '../../types/gameStatus';
 
 export type GameStateHistoryEntry = { squares: BoardSquares; playedCell: null | number };
-
-export interface PlayingStatus {
-  name: 'Playing';
-}
-
-export interface WinnerStatus {
-  name: 'Winner';
-  winner: SquareValue;
-  winningCells: [number, number, number];
-}
-
-export interface DrawStatus {
-  name: 'Draw';
-}
-
-export type GameStatus = PlayingStatus | WinnerStatus | DrawStatus;
 
 export interface GameState {
   history: GameStateHistoryEntry[];

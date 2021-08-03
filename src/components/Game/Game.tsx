@@ -2,17 +2,12 @@ import { store } from '../../state/store';
 import { useStore } from '../../state/storeHooks';
 import { Board } from '../Board/Board';
 import { playCell } from './Game.Slice';
+import { buildStatusText } from '../../types/gameStatus';
 import { History } from '../History/History';
 
 export function Game() {
   const { history, status, stepNumber, xIsNext, movesOrder } = useStore();
 
-  const statusText =
-    status.name === 'Winner'
-      ? 'Winner: ' + status.winner
-      : status.name === 'Draw'
-      ? 'Draw'
-      : 'Next player: ' + (xIsNext ? 'X' : 'O');
   return (
     <div className='game'>
       <div className='game-board'>
@@ -23,7 +18,7 @@ export function Game() {
         />
       </div>
       <div className='game-info'>
-        <div>{statusText}</div>
+        <div>{buildStatusText(status, xIsNext)}</div>
         <History {...{ history, movesOrder, stepNumber }} />
       </div>
     </div>
