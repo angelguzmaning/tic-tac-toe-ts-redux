@@ -24,3 +24,4 @@ This project includes scripts like eslint and prettier to check and fix code sty
 * `lint`
 
 To run unit test execute `npm run test` or `npm run test -- --coverage` if you want to check for code coverage completion. These scripts are the same used by Create React App, See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+test
