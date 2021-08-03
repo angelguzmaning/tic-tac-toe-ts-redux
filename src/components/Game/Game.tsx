@@ -5,17 +5,21 @@ import { GameStateHistoryEntry, jumpTo, playCell, toggleMovesOrder } from './Gam
 import * as R from 'ramda';
 
 export function Game() {
-  const { history, winner, stepNumber, xIsNext, movesOrder } = useStore();
+  const { history, status, stepNumber, xIsNext, movesOrder } = useStore();
 
-  const status = winner ? 'Winner: ' + winner : 'Next player: ' + (xIsNext ? 'X' : 'O');
+  const statusText = status.name === 'Winner' ? 'Winner: ' + status.winner : 'Next player: ' + (xIsNext ? 'X' : 'O');
   const moves = history.map(getMoveTemplate(stepNumber));
   return (
     <div className='game'>
       <div className='game-board'>
-        <Board squares={history[stepNumber].squares} onCellClicked={onCellClicked} />
+        <Board
+          squares={history[stepNumber].squares}
+          onCellClicked={onCellClicked}
+          highlight={status.name === 'Winner' ? status.winningCells : undefined}
+        />
       </div>
       <div className='game-info'>
-        <div>{status}</div>
+        <div>{statusText}</div>
         <button onClick={dispatchOnCall(toggleMovesOrder())}>Toggle moves order</button>
         <ol>{movesOrder === 'Ascending' ? moves : R.reverse(moves)}</ol>
       </div>

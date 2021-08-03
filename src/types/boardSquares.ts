@@ -12,7 +12,7 @@ export type BoardSquares = [
   SquareValue
 ];
 
-export function calculateWinner(squares: BoardSquares) {
+export function calculateWinner(squares: BoardSquares): null | [number, number, number] {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -26,7 +26,7 @@ export function calculateWinner(squares: BoardSquares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return [a, b, c];
     }
   }
   return null;

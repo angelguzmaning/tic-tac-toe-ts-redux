@@ -3,11 +3,23 @@ import { BoardSquares, calculateWinner, SquareValue } from '../../types/boardSqu
 
 export type GameStateHistoryEntry = { squares: BoardSquares; playedCell: null | number };
 
+export interface PlayingStatus {
+  name: 'Playing';
+}
+
+export interface WinnerStatus {
+  name: 'Winner';
+  winner: SquareValue;
+  winningCells: [number, number, number];
+}
+
+export type GameStatus = PlayingStatus | WinnerStatus;
+
 export interface GameState {
   history: GameStateHistoryEntry[];
   stepNumber: number;
   xIsNext: boolean;
-  winner: SquareValue;
+  status: GameStatus;
   movesOrder: 'Descending' | 'Ascending';
 }
 
@@ -15,7 +27,9 @@ const initialState: GameState = {
   history: [{ squares: [null, null, null, null, null, null, null, null, null], playedCell: null }],
   stepNumber: 0,
   xIsNext: true,
-  winner: null,
+  status: {
+    name: 'Playing',
+  },
   movesOrder: 'Ascending',
 };
 
@@ -27,7 +41,7 @@ const slice = createSlice({
     playCell: (state, { payload: index }: PayloadAction<number>) => {
       state.history = state.history.slice(0, state.stepNumber + 1);
       const current = state.history[state.history.length - 1];
-      if (current.squares[index] || state.winner) return;
+      if (current.squares[index] || state.status.name === 'Winner') return;
 
       state.history.push({ squares: current.squares.slice() as BoardSquares, playedCell: index });
       const value = state.xIsNext ? 'X' : 'O';
@@ -35,8 +49,9 @@ const slice = createSlice({
       state.xIsNext = !state.xIsNext;
       state.stepNumber = state.history.length - 1;
 
-      if (calculateWinner(state.history[state.history.length - 1].squares)) {
-        state.winner = value;
+      const winningCells = calculateWinner(state.history[state.history.length - 1].squares);
+      if (winningCells) {
+        state.status = { name: 'Winner', winner: value, winningCells };
       }
     },
     jumpTo: (state, { payload: step }: PayloadAction<number>) => {
@@ -44,12 +59,13 @@ const slice = createSlice({
       state.xIsNext = step % 2 === 0;
 
       if (step < state.history.length - 1) {
-        state.winner = null;
+        state.status = { name: 'Playing' };
         return;
       }
 
-      if (calculateWinner(state.history[state.history.length - 1].squares)) {
-        state.winner = !state.xIsNext ? 'X' : 'O';
+      const winningCells = calculateWinner(state.history[state.history.length - 1].squares);
+      if (winningCells) {
+        state.status = { name: 'Winner', winner: !state.xIsNext ? 'X' : 'O', winningCells };
       }
     },
     toggleMovesOrder: (state) => {
