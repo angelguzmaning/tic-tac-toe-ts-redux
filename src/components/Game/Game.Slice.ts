@@ -8,6 +8,7 @@ export interface GameState {
   stepNumber: number;
   xIsNext: boolean;
   winner: SquareValue;
+  movesOrder: 'Descending' | 'Ascending';
 }
 
 const initialState: GameState = {
@@ -15,6 +16,7 @@ const initialState: GameState = {
   stepNumber: 0,
   xIsNext: true,
   winner: null,
+  movesOrder: 'Ascending',
 };
 
 const slice = createSlice({
@@ -50,9 +52,12 @@ const slice = createSlice({
         state.winner = !state.xIsNext ? 'X' : 'O';
       }
     },
+    toggleMovesOrder: (state) => {
+      state.movesOrder = state.movesOrder === 'Ascending' ? 'Descending' : 'Ascending';
+    },
   },
 });
 
 export default slice.reducer;
 
-export const { reset, playCell, jumpTo } = slice.actions;
+export const { reset, playCell, jumpTo, toggleMovesOrder } = slice.actions;

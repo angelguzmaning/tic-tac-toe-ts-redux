@@ -1,12 +1,14 @@
-import { store } from '../../state/store';
+import { dispatchOnCall, store } from '../../state/store';
 import { useStore } from '../../state/storeHooks';
 import { Board } from '../Board/Board';
-import { GameStateHistoryEntry, jumpTo, playCell } from './Game.Slice';
+import { GameStateHistoryEntry, jumpTo, playCell, toggleMovesOrder } from './Game.Slice';
+import * as R from 'ramda';
 
 export function Game() {
-  const { history, winner, stepNumber, xIsNext } = useStore();
+  const { history, winner, stepNumber, xIsNext, movesOrder } = useStore();
 
   const status = winner ? 'Winner: ' + winner : 'Next player: ' + (xIsNext ? 'X' : 'O');
+  const moves = history.map(getMoveTemplate(stepNumber));
   return (
     <div className='game'>
       <div className='game-board'>
@@ -14,7 +16,8 @@ export function Game() {
       </div>
       <div className='game-info'>
         <div>{status}</div>
-        <ol>{history.map(getMoveTemplate(stepNumber))}</ol>
+        <button onClick={dispatchOnCall(toggleMovesOrder())}>Toggle moves order</button>
+        <ol>{movesOrder === 'Ascending' ? moves : R.reverse(moves)}</ol>
       </div>
     </div>
   );
