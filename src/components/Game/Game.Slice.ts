@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { WritableDraft } from 'immer/dist/internal';
 import { BoardSquares, calculateWinner, SquareValue } from '../../types/boardSquares';
 
 export type GameStateHistoryEntry = { squares: BoardSquares; playedCell: null | number };
@@ -49,30 +50,31 @@ const slice = createSlice({
       state.xIsNext = !state.xIsNext;
       state.stepNumber = state.history.length - 1;
 
-      const winningCells = calculateWinner(state.history[state.history.length - 1].squares);
-      if (winningCells) {
-        state.status = { name: 'Winner', winner: value, winningCells };
-      }
+      updateStatus(state);
     },
     jumpTo: (state, { payload: step }: PayloadAction<number>) => {
       state.stepNumber = step;
       state.xIsNext = step % 2 === 0;
 
-      if (step < state.history.length - 1) {
-        state.status = { name: 'Playing' };
-        return;
-      }
-
-      const winningCells = calculateWinner(state.history[state.history.length - 1].squares);
-      if (winningCells) {
-        state.status = { name: 'Winner', winner: !state.xIsNext ? 'X' : 'O', winningCells };
-      }
+      updateStatus(state);
     },
     toggleMovesOrder: (state) => {
       state.movesOrder = state.movesOrder === 'Ascending' ? 'Descending' : 'Ascending';
     },
   },
 });
+
+function updateStatus(state: WritableDraft<GameState>) {
+  if (state.stepNumber < state.history.length - 1) {
+    state.status = { name: 'Playing' };
+    return;
+  }
+
+  const winningCells = calculateWinner(state.history[state.history.length - 1].squares);
+  if (winningCells) {
+    state.status = { name: 'Winner', winner: !state.xIsNext ? 'X' : 'O', winningCells };
+  }
+}
 
 export default slice.reducer;
 
