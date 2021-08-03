@@ -14,7 +14,7 @@ it('Should render empty cells and Go to game start button', () => {
   const { queryAllByRole, getByText } = render(<Game />);
 
   const buttons = queryAllByRole('button');
-  expect(buttons.length).toBe(9 + store.getState().history.length);
+  expect(buttons.length).toBe(9 + 1 + store.getState().history.length);
   R.take(9, buttons).forEach((button) => expect(button.innerHTML).toBeFalsy());
 
   expect(getByText('Go to game start')).toBeInTheDocument();
@@ -84,10 +84,10 @@ it('Should update render to match state', () => {
     store.dispatch(playCell(4));
   });
 
-  expect(screen.getByText('Go to move #1')).toBeInTheDocument();
-  expect(screen.getByText('Go to move #2')).toBeInTheDocument();
-  expect(screen.getByText('Go to move #3')).toBeInTheDocument();
-  expect(screen.getByText('Go to move #4')).toBeInTheDocument();
+  expect(screen.getByText('Go to move #1 (1, 0)')).toBeInTheDocument();
+  expect(screen.getByText('Go to move #2 (2, 0)')).toBeInTheDocument();
+  expect(screen.getByText('Go to move #3 (0, 1)')).toBeInTheDocument();
+  expect(screen.getByText('Go to move #4 (1, 1)')).toBeInTheDocument();
 });
 
 it('Should update store on cell clicked', () => {
@@ -128,13 +128,13 @@ it('Should jump history on click', () => {
   expect(store.getState().stepNumber).toBe(0);
 
   act(() => {
-    fireEvent.click(screen.getByText('Go to move #2'));
+    fireEvent.click(screen.getByText('Go to move #2 (2, 0)'));
   });
 
   expect(store.getState().stepNumber).toBe(2);
 
   act(() => {
-    fireEvent.click(screen.getByText('Go to move #4'));
+    fireEvent.click(screen.getByText('Go to move #4 (1, 1)'));
   });
 
   expect(store.getState().stepNumber).toBe(4);
@@ -227,4 +227,47 @@ it('Should jump before and to winning step for O', () => {
   });
 
   expect(screen.getByText('Winner: O')).toBeInTheDocument();
+});
+
+it('Should toggle moves order', () => {
+  act(() => {
+    render(<Game />);
+  });
+
+  act(() => {
+    fireEvent.click(screen.getByText('Toggle moves order'));
+  });
+
+  expect(store.getState().movesOrder).toMatch('Descending');
+
+  act(() => {
+    fireEvent.click(screen.getByText('Toggle moves order'));
+  });
+
+  expect(store.getState().movesOrder).toMatch('Ascending');
+});
+
+it("Should display draw if there's no winner", () => {
+  act(() => {
+    render(<Game />);
+  });
+
+  act(() => {
+    store.dispatch(playCell(0));
+    store.dispatch(playCell(1));
+    store.dispatch(playCell(2));
+    store.dispatch(playCell(4));
+    store.dispatch(playCell(3));
+    store.dispatch(playCell(5));
+    store.dispatch(playCell(7));
+    store.dispatch(playCell(6));
+    store.dispatch(playCell(8));
+  });
+  expect(screen.getByText('Draw')).toBeInTheDocument();
+
+  act(() => {
+    store.dispatch(jumpTo(8));
+    store.dispatch(jumpTo(9));
+  });
+  expect(screen.getByText('Draw')).toBeInTheDocument();
 });

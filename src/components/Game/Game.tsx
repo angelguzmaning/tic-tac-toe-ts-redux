@@ -1,36 +1,28 @@
 import { store } from '../../state/store';
 import { useStore } from '../../state/storeHooks';
 import { Board } from '../Board/Board';
-import { GameStateHistoryEntry, jumpTo, playCell } from './Game.Slice';
+import { playCell } from './Game.Slice';
+import { buildStatusText } from '../../types/gameStatus';
+import { History } from '../History/History';
 
 export function Game() {
-  const { history, winner, stepNumber, xIsNext } = useStore();
+  const { history, status, stepNumber, xIsNext, movesOrder } = useStore();
 
-  const status = winner ? 'Winner: ' + winner : 'Next player: ' + (xIsNext ? 'X' : 'O');
   return (
     <div className='game'>
       <div className='game-board'>
-        <Board squares={history[stepNumber].squares} onCellClicked={onCellClicked} />
+        <Board
+          squares={history[stepNumber].squares}
+          onCellClicked={onCellClicked}
+          highlight={status.name === 'Winner' ? status.winningCells : undefined}
+        />
       </div>
       <div className='game-info'>
-        <div>{status}</div>
-        <ol>{history.map(getMoveTemplate)}</ol>
+        <div>{buildStatusText(status, xIsNext)}</div>
+        <History {...{ history, movesOrder, stepNumber }} />
       </div>
     </div>
   );
-}
-
-function getMoveTemplate(_: GameStateHistoryEntry, move: number) {
-  const desc = move ? 'Go to move #' + move : 'Go to game start';
-  return (
-    <li key={move}>
-      <button onClick={() => onJumpTo(move)}>{desc}</button>
-    </li>
-  );
-}
-
-function onJumpTo(step: number) {
-  store.dispatch(jumpTo(step));
 }
 
 function onCellClicked(index: number) {
