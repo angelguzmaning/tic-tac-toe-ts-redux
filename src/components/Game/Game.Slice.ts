@@ -14,7 +14,11 @@ export interface WinnerStatus {
   winningCells: [number, number, number];
 }
 
-export type GameStatus = PlayingStatus | WinnerStatus;
+export interface DrawStatus {
+  name: 'Draw';
+}
+
+export type GameStatus = PlayingStatus | WinnerStatus | DrawStatus;
 
 export interface GameState {
   history: GameStateHistoryEntry[];
@@ -73,6 +77,11 @@ function updateStatus(state: WritableDraft<GameState>) {
   const winningCells = calculateWinner(state.history[state.history.length - 1].squares);
   if (winningCells) {
     state.status = { name: 'Winner', winner: !state.xIsNext ? 'X' : 'O', winningCells };
+    return;
+  }
+
+  if (state.stepNumber === 9) {
+    state.status = { name: 'Draw' };
   }
 }
 

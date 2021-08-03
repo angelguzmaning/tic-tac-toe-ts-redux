@@ -246,3 +246,28 @@ it('Should toggle moves order', () => {
 
   expect(store.getState().movesOrder).toMatch('Ascending');
 });
+
+it("Should display draw if there's no winner", () => {
+  act(() => {
+    render(<Game />);
+  });
+
+  act(() => {
+    store.dispatch(playCell(0));
+    store.dispatch(playCell(1));
+    store.dispatch(playCell(2));
+    store.dispatch(playCell(4));
+    store.dispatch(playCell(3));
+    store.dispatch(playCell(5));
+    store.dispatch(playCell(7));
+    store.dispatch(playCell(6));
+    store.dispatch(playCell(8));
+  });
+  expect(screen.getByText('Draw')).toBeInTheDocument();
+
+  act(() => {
+    store.dispatch(jumpTo(8));
+    store.dispatch(jumpTo(9));
+  });
+  expect(screen.getByText('Draw')).toBeInTheDocument();
+});

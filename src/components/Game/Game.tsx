@@ -7,7 +7,12 @@ import * as R from 'ramda';
 export function Game() {
   const { history, status, stepNumber, xIsNext, movesOrder } = useStore();
 
-  const statusText = status.name === 'Winner' ? 'Winner: ' + status.winner : 'Next player: ' + (xIsNext ? 'X' : 'O');
+  const statusText =
+    status.name === 'Winner'
+      ? 'Winner: ' + status.winner
+      : status.name === 'Draw'
+      ? 'Draw'
+      : 'Next player: ' + (xIsNext ? 'X' : 'O');
   const moves = history.map(getMoveTemplate(stepNumber));
   return (
     <div className='game'>
