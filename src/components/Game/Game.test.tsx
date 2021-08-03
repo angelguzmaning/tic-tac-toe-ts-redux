@@ -84,10 +84,10 @@ it('Should update render to match state', () => {
     store.dispatch(playCell(4));
   });
 
-  expect(screen.getByText('Go to move #1')).toBeInTheDocument();
-  expect(screen.getByText('Go to move #2')).toBeInTheDocument();
-  expect(screen.getByText('Go to move #3')).toBeInTheDocument();
-  expect(screen.getByText('Go to move #4')).toBeInTheDocument();
+  expect(screen.getByText('Go to move #1 (1, 0)')).toBeInTheDocument();
+  expect(screen.getByText('Go to move #2 (2, 0)')).toBeInTheDocument();
+  expect(screen.getByText('Go to move #3 (0, 1)')).toBeInTheDocument();
+  expect(screen.getByText('Go to move #4 (1, 1)')).toBeInTheDocument();
 });
 
 it('Should update store on cell clicked', () => {
@@ -128,13 +128,13 @@ it('Should jump history on click', () => {
   expect(store.getState().stepNumber).toBe(0);
 
   act(() => {
-    fireEvent.click(screen.getByText('Go to move #2'));
+    fireEvent.click(screen.getByText('Go to move #2 (2, 0)'));
   });
 
   expect(store.getState().stepNumber).toBe(2);
 
   act(() => {
-    fireEvent.click(screen.getByText('Go to move #4'));
+    fireEvent.click(screen.getByText('Go to move #4 (1, 1)'));
   });
 
   expect(store.getState().stepNumber).toBe(4);

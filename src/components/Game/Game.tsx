@@ -20,13 +20,19 @@ export function Game() {
   );
 }
 
-function getMoveTemplate(_: GameStateHistoryEntry, move: number) {
-  const desc = move ? 'Go to move #' + move : 'Go to game start';
+function getMoveTemplate(entry: GameStateHistoryEntry, move: number) {
+  const desc = move
+    ? `Go to move #${move} ${getColRowRepresentationOfCell(entry.playedCell || 0)}`
+    : 'Go to game start';
   return (
     <li key={move}>
       <button onClick={() => onJumpTo(move)}>{desc}</button>
     </li>
   );
+}
+
+function getColRowRepresentationOfCell(index: number): string {
+  return `(${index % 3}, ${Math.floor(index / 3)})`;
 }
 
 function onJumpTo(step: number) {

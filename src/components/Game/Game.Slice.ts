@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BoardSquares, calculateWinner, SquareValue } from '../../types/boardSquares';
 
-export type GameStateHistoryEntry = { squares: BoardSquares };
+export type GameStateHistoryEntry = { squares: BoardSquares; playedCell: null | number };
 
 export interface GameState {
   history: GameStateHistoryEntry[];
@@ -11,7 +11,7 @@ export interface GameState {
 }
 
 const initialState: GameState = {
-  history: [{ squares: [null, null, null, null, null, null, null, null, null] }],
+  history: [{ squares: [null, null, null, null, null, null, null, null, null], playedCell: null }],
   stepNumber: 0,
   xIsNext: true,
   winner: null,
@@ -27,7 +27,7 @@ const slice = createSlice({
       const current = state.history[state.history.length - 1];
       if (current.squares[index] || state.winner) return;
 
-      state.history.push({ squares: current.squares.slice() as BoardSquares });
+      state.history.push({ squares: current.squares.slice() as BoardSquares, playedCell: index });
       const value = state.xIsNext ? 'X' : 'O';
       state.history[state.history.length - 1].squares[index] = value;
       state.xIsNext = !state.xIsNext;
